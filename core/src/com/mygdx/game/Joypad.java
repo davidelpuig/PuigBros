@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Joypad implements InputProcessor {
 
@@ -29,12 +31,14 @@ public class Joypad implements InputProcessor {
     }
 
     ArrayList<Button> buttons;
+    Map<Integer,Button> pointers;
     final OrthographicCamera camera;
 
     public Joypad(OrthographicCamera camera)
     {
         this.camera = camera;
         buttons = new ArrayList<>();
+        pointers = new HashMap<>();
 
         Gdx.input.setInputProcessor(this);
 
@@ -86,6 +90,7 @@ public class Joypad implements InputProcessor {
         {
             if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
             {
+                pointers.put(pointer,buttons.get(i));
                 buttons.get(i).pressed = true;
             }
         }
@@ -96,16 +101,38 @@ public class Joypad implements InputProcessor {
     @Override
     public boolean touchUp (int x, int y, int pointer, int button) {
         // your touch up code here
-        for(int i = 0; i < buttons.size(); i++)
+        if(pointers.get(pointer) != null)
         {
-            buttons.get(i).pressed = false;
+            pointers.get(pointer).pressed = false;
+            pointers.remove(pointer);
         }
         return true; // return true to indicate the event was handled
     }
 
     @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
+    public boolean touchDragged(int screenX, int screenY, int pointer)
+    {
+        Vector3 touchPos = new Vector3();
+        touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(touchPos);
+
+        if(pointers.get(pointer) != null)
+        {
+            if(!pointers.get(pointer).rect.contains(touchPos.x, touchPos.y))
+            {
+                pointers.get(pointer).pressed = false;
+            }
+
+            for(int i = 0; i < buttons.size(); i++)
+            {
+                if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
+                {
+                    pointers.put(pointer,buttons.get(i));
+                    buttons.get(i).pressed = true;
+                }
+            }
+        }
+        return true;
     }
 
     @Override

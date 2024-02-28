@@ -21,8 +21,7 @@ public class GameScreen implements Screen {
         joypad.addButton(160,80, 60, 60, "Right");
         joypad.addButton(100,20, 60, 60, "Down");
         joypad.addButton(100,140, 60, 60, "Up");
-
-
+        joypad.addButton(700,80, 60, 60, "Jump");
 
     }
 
