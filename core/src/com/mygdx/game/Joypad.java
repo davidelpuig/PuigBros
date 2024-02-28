@@ -116,20 +116,24 @@ public class Joypad implements InputProcessor {
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(touchPos);
 
-        if(pointers.get(pointer) != null)
+        /*if(pointers.get(pointer) != null)
         {
             if(!pointers.get(pointer).rect.contains(touchPos.x, touchPos.y))
             {
                 pointers.get(pointer).pressed = false;
             }
+        }*/
 
-            for(int i = 0; i < buttons.size(); i++)
+        for(int i = 0; i < buttons.size(); i++)
+        {
+            if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
             {
-                if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
+                if(pointers.get(pointer) != null)
                 {
-                    pointers.put(pointer,buttons.get(i));
-                    buttons.get(i).pressed = true;
+                    pointers.get(pointer).pressed = false;
                 }
+                pointers.put(pointer,buttons.get(i));
+                buttons.get(i).pressed = true;
             }
         }
         return true;
