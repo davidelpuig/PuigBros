@@ -30,14 +30,14 @@ public class Joypad implements InputProcessor {
         }
     }
 
-    ArrayList<Button> buttons;
+    Map<String,Button> buttons;
     Map<Integer,Button> pointers;
     final OrthographicCamera camera;
 
     public Joypad(OrthographicCamera camera)
     {
         this.camera = camera;
-        buttons = new ArrayList<>();
+        buttons = new HashMap<>();
         pointers = new HashMap<>();
 
         Gdx.input.setInputProcessor(this);
@@ -47,14 +47,23 @@ public class Joypad implements InputProcessor {
     public void addButton(int x, int y, int sx, int sy, String action)
     {
         Button b = new Button(x, y, sx, sy, action);
-        buttons.add(b);
+        buttons.put(action, b);
+    }
+
+    boolean isPressed(String action)
+    {
+        if(buttons.get(action) != null)
+            return buttons.get(action).pressed;
+        else
+            return false;
     }
 
     public void render(ShapeRenderer shapeRenderer)
     {
         shapeRenderer.setAutoShapeType(true);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        for(int i = 0; i < buttons.size(); i++)
+
+        for(String i:buttons.keySet())
         {
             Button b = buttons.get(i);
             shapeRenderer.setColor(b.pressed ? Color.YELLOW : Color.BLACK);
@@ -86,7 +95,8 @@ public class Joypad implements InputProcessor {
         touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         camera.unproject(touchPos);
 
-        for(int i = 0; i < buttons.size(); i++)
+        for(String i:buttons.keySet())
+        //for(int i = 0; i < buttons.size(); i++)
         {
             if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
             {
@@ -124,7 +134,8 @@ public class Joypad implements InputProcessor {
             }
         }*/
 
-        for(int i = 0; i < buttons.size(); i++)
+        for(String i:buttons.keySet())
+        //for(int i = 0; i < buttons.size(); i++)
         {
             if(buttons.get(i).rect.contains(touchPos.x,touchPos.y))
             {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class PuigBros extends Game {
@@ -13,6 +14,7 @@ public class PuigBros extends Game {
 	public ShapeRenderer shapeRenderer;
 	Texture img;
 	public OrthographicCamera camera;
+
 	
 	@Override
 	public void create () {
@@ -23,7 +25,7 @@ public class PuigBros extends Game {
 		img = new Texture("badlogic.jpg");
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(true, 800, 480);
 
 		setScreen(new GameScreen(this));
 	}

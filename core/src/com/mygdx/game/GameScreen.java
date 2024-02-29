@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
@@ -11,17 +12,29 @@ public class GameScreen implements Screen {
     PuigBros game;
     Joypad joypad;
 
+    Stage stage;
+    TileMap tileMap;
+
+    Player player;
+
     public GameScreen(PuigBros game)
     {
         this.game = game;
 
         // Create joypad
         joypad = new Joypad(game.camera);
-        joypad.addButton(40,80, 60, 60, "Left");
-        joypad.addButton(160,80, 60, 60, "Right");
-        joypad.addButton(100,20, 60, 60, "Down");
-        joypad.addButton(100,140, 60, 60, "Up");
-        joypad.addButton(700,80, 60, 60, "Jump");
+        joypad.addButton(40,340, 60, 60, "Left");
+        joypad.addButton(160,340, 60, 60, "Right");
+        joypad.addButton(100,400, 60, 60, "Down");
+        joypad.addButton(100,280, 60, 60, "Up");
+        joypad.addButton(700,340, 60, 60, "Jump");
+
+        tileMap = new TileMap();
+        stage = new Stage();
+        player = new Player();
+        player.setMap(tileMap);
+        player.setJoypad(joypad);
+        stage.addActor(player);
 
     }
 
@@ -33,9 +46,10 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        // Render step =============================================
         game.camera.update();
 
-        ScreenUtils.clear(1, 0, 0, 1);
+        ScreenUtils.clear(Color.SKY);
 
         game.batch.setProjectionMatrix(game.camera.combined);
         game.batch.begin();
@@ -43,11 +57,17 @@ public class GameScreen implements Screen {
         game.batch.end();
 
         game.shapeRenderer.setProjectionMatrix(game.camera.combined);
-        game.shapeRenderer.begin();
+        /*game.shapeRenderer.begin();
         game.shapeRenderer.setColor(Color.YELLOW);
         game.shapeRenderer.line(0,0,800,480);
-        game.shapeRenderer.end();
+        game.shapeRenderer.end();*/
+        tileMap.render(game.shapeRenderer);
+        stage.draw();
+        player.drawDebug(game.shapeRenderer);
         joypad.render(game.shapeRenderer);
+
+        // Update step =============================================
+        stage.act(delta);
     }
 
     @Override
