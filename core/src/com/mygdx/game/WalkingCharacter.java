@@ -9,7 +9,7 @@ import java.awt.Rectangle;
 
 public class WalkingCharacter extends GameEntity {
 
-    static final float GRAVITY = 98.f;
+    static final float GRAVITY = 300.f;
     TileMap map;
 
     protected boolean falling;
@@ -26,7 +26,6 @@ public class WalkingCharacter extends GameEntity {
 
     @Override
     public void act(float delta) {
-        super.act(delta);
 
         if(map.isSolid((int)(getX() - getWidth()/2),(int)(getY()+ getHeight()/2+delta*speed.y)) ||
                 map.isSolid((int)(getX() + getWidth()/2),(int)(getY()+ getHeight()/2+delta*speed.y))
@@ -41,6 +40,23 @@ public class WalkingCharacter extends GameEntity {
             speed.y += delta*GRAVITY;
         }
 
+        if(     speed.x > 0 && (
+                map.isSolid((int)(getX() + getWidth()/2 + delta * speed.x), (int)(getY() - getHeight()*0.25f)) ||
+                map.isSolid((int)(getX() + getWidth()/2 + delta * speed.x), (int)(getY() + getHeight()*0.25f))
+                )
+        )
+        {
+            speed.x = 0;
+        }
+        if(     speed.x < 0 && (
+                map.isSolid((int)(getX() - getWidth()/2 + delta * speed.x), (int)(getY() - getHeight()*0.25f)) ||
+                        map.isSolid((int)(getX() - getWidth()/2 + delta * speed.x), (int)(getY() + getHeight()*0.25f))
+        )
+        )
+        {
+            speed.x = 0;
+        }
+        super.act(delta);
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Player extends WalkingCharacter {
 
+    static final float JUMP_IMPULSE = -300f;
     Joypad joypad;
 
     public Player()
@@ -21,7 +22,23 @@ public class Player extends WalkingCharacter {
 
         if(!falling && joypad.isPressed("Jump"))
         {
-            speed.y = -200f;
+            speed.y = JUMP_IMPULSE;
+        }
+
+        if(!falling)
+        {
+            if(joypad.isPressed("Right"))
+            {
+                speed.x = 120f;
+            }
+            else if(joypad.isPressed("Left"))
+            {
+                speed.x = -120f;
+            }
+            else
+            {
+                speed.x *= 1 - (0.9f*delta);
+            }
         }
     }
 
