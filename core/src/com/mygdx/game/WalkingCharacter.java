@@ -9,7 +9,7 @@ import java.awt.Rectangle;
 
 public class WalkingCharacter extends GameEntity {
 
-    static final float GRAVITY = 300.f;
+    static final float GRAVITY = 400.f;
     TileMap map;
 
     protected boolean falling;
@@ -27,17 +27,54 @@ public class WalkingCharacter extends GameEntity {
     @Override
     public void act(float delta) {
 
-        if(map.isSolid((int)(getX() - getWidth()/2),(int)(getY()+ getHeight()/2+delta*speed.y)) ||
-                map.isSolid((int)(getX() + getWidth()/2),(int)(getY()+ getHeight()/2+delta*speed.y))
-            )
+        int nearestFloor1 = map.nearestFloor((int)(getX() - getWidth()/2), (int)getY());
+        int nearestFloor2 = map.nearestFloor((int)(getX() + getWidth()/2), (int)getY());
+
+        if(falling)
         {
-            falling = false;
-            speed.y = 0;
+            if(speed.y > 0) {
+                if (nearestFloor1 <= getY() + getHeight() / 2 && speed.y > 0) {
+                    falling = false;
+                    speed.y = 0;
+                    setY(nearestFloor1 - getHeight() / 2);
+                } else if (nearestFloor2 <= getY() + getHeight() / 2 && speed.y > 0) {
+                    falling = false;
+                    speed.y = 0;
+                    setY(nearestFloor2 - getHeight() / 2);
+                }
+                else
+                {
+                    // Keep falling
+                    speed.y += delta * GRAVITY;
+                }
+            }
+            else if (speed.y < 0)
+            {
+                int nearestCeiling1 = map.nearestCeiling((int)(getX() - getWidth()/2), (int)getY());
+                int nearestCeiling2 = map.nearestCeiling((int)(getX() + getWidth()/2), (int)getY());
+
+                if(nearestCeiling1 > getY() - getHeight()/2 || nearestCeiling2 > getY() - getHeight()/2)
+                {
+                    speed.y = -speed.y;
+                }
+                else
+                {
+                    // Keep falling
+                    speed.y += delta * GRAVITY;
+                }
+            }
+            else
+            {
+                // Keep falling
+                speed.y += delta * GRAVITY;
+            }
         }
         else
         {
-            falling = true;
-            speed.y += delta*GRAVITY;
+            if(nearestFloor1 > getY() + (getHeight() / 2) && nearestFloor2 > getY() + (getHeight() / 2))
+            {
+                falling = true;
+            }
         }
 
         if(     speed.x > 0 && (
@@ -65,7 +102,7 @@ public class WalkingCharacter extends GameEntity {
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         shapes.setColor(Color.NAVY);
-        shapes.rect(getX() - getWidth()*0.5f, getY() - getHeight()*0.5f, getWidth(), getHeight());
+        shapes.rect(getX() - getWidth()*0.5f - map.scrollX, getY() - getHeight()*0.5f, getWidth(), getHeight());
         shapes.end();
     }
 }

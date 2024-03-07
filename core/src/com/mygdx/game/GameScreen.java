@@ -17,6 +17,7 @@ public class GameScreen implements Screen {
 
     Player player;
 
+
     public GameScreen(PuigBros game)
     {
         this.game = game;
@@ -35,6 +36,7 @@ public class GameScreen implements Screen {
         player.setMap(tileMap);
         player.setJoypad(joypad);
         stage.addActor(player);
+
 
     }
 
@@ -68,6 +70,12 @@ public class GameScreen implements Screen {
 
         // Update step =============================================
         stage.act(delta);
+        tileMap.scrollX = (int)(player.getX() - 400);
+        if(tileMap.scrollX < 0)
+            tileMap.scrollX = 0;
+        if(tileMap.scrollX >= tileMap.width * tileMap.TILE_SIZE - 800)
+            tileMap.scrollX = tileMap.width * tileMap.TILE_SIZE - 800 - 1;
+
     }
 
     @Override

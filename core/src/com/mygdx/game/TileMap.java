@@ -6,18 +6,20 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class TileMap {
 
     static final int TILE_SIZE = 64;
-    int width = 14;
+    int width = 29;
     int height = 8;
     byte tiles[][] = {
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0}
     };
+
+    public int scrollX;
 
     public TileMap()
     {
@@ -33,9 +35,9 @@ public class TileMap {
                 if(tiles[j][i] != 0)
                 {
                     shapeRenderer.setColor(Color.OLIVE);
-                    shapeRenderer.rect(TILE_SIZE * i, TILE_SIZE * j, TILE_SIZE, TILE_SIZE);
+                    shapeRenderer.rect(TILE_SIZE * i - scrollX, TILE_SIZE * j, TILE_SIZE, TILE_SIZE);
                     shapeRenderer.setColor(Color.FIREBRICK);
-                    shapeRenderer.rect(TILE_SIZE * i + 6, TILE_SIZE * j + 6, TILE_SIZE - 12, TILE_SIZE - 12);
+                    shapeRenderer.rect(TILE_SIZE * i + 6 - scrollX, TILE_SIZE * j + 6, TILE_SIZE - 12, TILE_SIZE - 12);
                 }
             }
         shapeRenderer.end();
@@ -48,10 +50,59 @@ public class TileMap {
 
         if(mapX < 0) mapX = 0;
         if(mapY < 0) mapY = 0;
-        if(mapX >= width * TILE_SIZE) mapX = (width * TILE_SIZE) - 1;
-        if(mapY >= height * TILE_SIZE) mapY = (height * TILE_SIZE) - 1;
+        if(mapX >= width) mapX = width - 1;
+        if(mapY >= height) mapY = height - 1;
 
         return tiles[mapY][mapX] != 0;
     }
 
+    int nearestFloor(int x, int y)
+    {
+        int mapX = x / TILE_SIZE;
+        int mapY = y / TILE_SIZE;
+
+        if(mapX < 0) mapX = 0;
+        if(mapY < 0) mapY = 0;
+        if(mapX >= width) mapX = width - 1;
+        if(mapY >= height) mapY = height - 1;
+
+        while(mapY < height && tiles[mapY][mapX] == 0)
+        {
+            mapY++;
+        }
+
+        if(mapY >= height)
+        {
+            return 9999;
+        }
+        else
+        {
+            return mapY * TILE_SIZE;
+        }
+    }
+
+    int nearestCeiling(int x, int y)
+    {
+        int mapX = x / TILE_SIZE;
+        int mapY = y / TILE_SIZE;
+
+        if(mapX < 0) mapX = 0;
+        if(mapY < 0) mapY = 0;
+        if(mapX >= width) mapX = width - 1;
+        if(mapY >= height) mapY = height - 1;
+
+        while(mapY >= 0 && tiles[mapY][mapX] == 0)
+        {
+            mapY--;
+        }
+
+        if(mapY < 0)
+        {
+            return -9999;
+        }
+        else
+        {
+            return ((mapY + 1) * TILE_SIZE) - 1;
+        }
+    }
 }
