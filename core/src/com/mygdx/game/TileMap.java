@@ -5,25 +5,35 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class TileMap {
 
-    static final int TILE_SIZE = 64;
-    int width = 29;
-    int height = 8;
-    byte tiles[][] = {
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
-            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0}
-    };
+    public static final int TILE_SIZE = 64;
+    int width;
+    int height;
+    byte tiles[][];
 
     public int scrollX;
 
     public TileMap()
     {
 
+    }
+
+    void loadFromLevel(Level l)
+    {
+        width = l.getMapWidth();
+        height = l.getMapHeight();
+
+        tiles = new byte[height][];
+
+        for(int i = 0; i < height; i++)
+        {
+            tiles[i] = new byte[width];
+        }
+
+        for(int i = 0; i < height; i++)
+            for(int j = 0; j < width; j++)
+            {
+                tiles[i][j] = l.getTileMap()[i][j];
+            }
     }
 
     public void render(ShapeRenderer shapeRenderer)

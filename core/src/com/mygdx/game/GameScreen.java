@@ -1,11 +1,17 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import java.util.ArrayList;
 
 public class GameScreen implements Screen {
 
@@ -16,6 +22,7 @@ public class GameScreen implements Screen {
     TileMap tileMap;
 
     Player player;
+    ArrayList<Actor> enemies;
 
 
     public GameScreen(PuigBros game)
@@ -33,11 +40,29 @@ public class GameScreen implements Screen {
         tileMap = new TileMap();
         stage = new Stage();
         player = new Player();
+        enemies = new ArrayList<>();
         player.setMap(tileMap);
         player.setJoypad(joypad);
         stage.addActor(player);
 
+        Json json = new Json();
 
+        FileHandle file = Gdx.files.internal("Level.json");
+        String scores = file.readString();
+        Level l = json.fromJson(Level.class, scores);
+        tileMap.loadFromLevel(l);
+
+        for(int i = 0; i < l.getEnemies().size(); i++)
+        {
+            Enemy e = l.getEnemies().get(i);
+            if(e.getType().equals("Turtle"))
+            {
+                Turtle t = new Turtle(e.getX() * tileMap.TILE_SIZE, e.getY() * tileMap.TILE_SIZE);
+                t.setMap(tileMap);
+                enemies.add(t);
+                stage.addActor(t);
+            }
+        }
     }
 
     @Override
@@ -66,6 +91,8 @@ public class GameScreen implements Screen {
         tileMap.render(game.shapeRenderer);
         stage.draw();
         player.drawDebug(game.shapeRenderer);
+        for (int i = 0; i < enemies.size(); i++)
+            enemies.get(i).drawDebug(game.shapeRenderer);
         joypad.render(game.shapeRenderer);
 
         // Update step =============================================
